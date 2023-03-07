@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2020-2022 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2020-2023 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict'
 
@@ -8,7 +8,6 @@
  * wallets, etc).
  */
 
-const MEDIATOR = 'https://authn.io/mediator' + '?origin=' +
-  encodeURIComponent(window.location.origin);
+const MEDIATOR = 'https://authn.io/mediator';
 
 const WALLET_LOCATION = window.location.origin + '/';
