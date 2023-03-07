@@ -6,10 +6,15 @@
       "type": "image/png"
     }
   ],
-  "name": "Demo Wallet",
-  "short_name": "Demo Wallet",
+  "name": "Demo Out-Of-Band Wallet",
+  "short_name": "Demo Out-Of-Band Wallet",
   "credential_handler": {
     "url": "/wallet-worker.html",
+    "protocol": {
+      "input": "url",
+      "COMMENT_input_default": "event",
+      "COMMENT_queryParameterName_default": "request"
+    },
     "enabledTypes": ["VerifiablePresentation"]
   }
 }
