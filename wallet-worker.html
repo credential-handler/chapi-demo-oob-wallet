@@ -57,8 +57,8 @@
 function handleRequest() {
   let request;
   try {
-    const query = new URLSearchParams(window.location.search);
-    request = JSON.parse(query.request);
+    const parsed = new URL(window.location.href);
+    request = JSON.parse(parsed.searchParams.get('request'));
   } catch(e) {
     console.error('Error parsing credential request.');
     throw e;
@@ -76,7 +76,8 @@ function handleRequest() {
   const query = Array.isArray(vp.query) ? vp.query[0] : vp.query;
 
   if(!query.type === 'QueryByExample') {
-    throw new Error('Only QueryByExample requests are supported in demo wallet.');
+    throw new Error(
+      'Only "QueryByExample" requests are supported in demo wallet.');
   }
 
   const requestReason = query.credentialQuery.reason;
