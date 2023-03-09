@@ -11,9 +11,7 @@
   "credential_handler": {
     "url": "/wallet-worker.html",
     "protocol": {
-      "input": "url",
-      "COMMENT_input_default": "event",
-      "COMMENT_queryParameterName_default": "request"
+      "input": "url"
     },
     "enabledTypes": ["VerifiablePresentation"]
   }
