@@ -1,6 +1,6 @@
 {
   "name": "chapi-demo-oob-wallet",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Credential Handler API Demo Out-of-Band Wallet",
   "main": "index.js",
   "repository": {
