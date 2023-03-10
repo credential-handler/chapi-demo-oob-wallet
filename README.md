@@ -1,6 +1,6 @@
-# Credential Handler API Demo Wallet
+# Credential Handler API Demo Out-of-Band Wallet
 
-> [Credential Handler API](https://w3c-ccg.github.io/credential-handler-api/) (CHAPI) demo wallet app
+> [Credential Handler API](https://w3c-ccg.github.io/credential-handler-api/) (CHAPI) demo oob wallet app
 
 ## Table of Contents
 
@@ -26,7 +26,7 @@ Demos:
 
 1. Run `npm install`
 2. Run `npm start`
-3. Visit `https://chapi-demo-wallet.localhost:8081`
+3. Visit `https://chapi-demo-wallet.localhost:8084`
 
 ## Security
 
