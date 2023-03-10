@@ -1,6 +1,6 @@
 # chapi-demo-oob-wallet Changelog
 
-## 1.1.1 - 2023-03-dd
+## 1.1.1 - 2023-03-10
 
 ### Fixed
 - Handle case where wallet contents are empty.
