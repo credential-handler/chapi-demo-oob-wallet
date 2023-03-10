@@ -10,9 +10,8 @@
   "short_name": "Demo Out-Of-Band Wallet",
   "credential_handler": {
     "url": "/wallet-worker.html",
-    "protocol": {
-      "input": "url"
-    },
-    "enabledTypes": ["VerifiablePresentation"]
+    "enabledTypes": ["VerifiablePresentation"],
+    "acceptedInput": "url",
+    "acceptedProtocols": ["OID4VC", "OID4VP"]
   }
 }
