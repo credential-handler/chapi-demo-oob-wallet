@@ -1,6 +1,6 @@
 # chapi-demo-oob-wallet Changelog
 
-## 1.0.1 - 2023-03-xx
+## 1.0.1 - 2023-03-10
 
 ### Changed
 - Upgrade `docker` actions in packaging workflow.
