@@ -98,7 +98,7 @@ function addToWalletDisplay({text, vc, button}) {
   // create valid class name for `vc
   let vcClass = '';
   if(vc) {
-    vc = btoa(vc.id).slice(0, -3);
+    vcClass = btoa(vc.id).slice(0, -3);
   }
 
   document.querySelectorAll('.walletContents').forEach(e => {

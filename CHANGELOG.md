@@ -1,5 +1,10 @@
 # chapi-demo-oob-wallet Changelog
 
+## 1.2.2 - 2023-03-dd
+
+### Fixed
+- Fix typo in wallet content management code.
+
 ## 1.2.1 - 2023-03-10
 
 ### Fixed
