@@ -96,7 +96,10 @@ function clearWalletDisplay() {
 
 function addToWalletDisplay({text, vc, button}) {
   // create valid class name for `vc
-  const vcClass = btoa(vc.id).slice(0, -3);
+  let vcClass = '';
+  if(vc) {
+    vc = btoa(vc.id).slice(0, -3);
+  }
 
   document.querySelectorAll('.walletContents').forEach(e => {
     const li = document.createElement('li');
@@ -114,7 +117,7 @@ function addToWalletDisplay({text, vc, button}) {
     e.appendChild(li);
   });
 
-  if(button) {
+  if(button && vc) {
     document.querySelectorAll('.' + vcClass).forEach(
       e => e.addEventListener('click', () => {
         const vp = {
