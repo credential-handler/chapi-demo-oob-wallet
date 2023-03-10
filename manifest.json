@@ -2,7 +2,7 @@
   "icons": [
     {
       "sizes": "48x48 64x64",
-      "src": "demo-wallet.png",
+      "src": "demo-oob-wallet.png",
       "type": "image/png"
     }
   ],

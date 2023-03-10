@@ -1,5 +1,10 @@
 # chapi-demo-oob-wallet Changelog
 
+## 1.2.0 - 2023-03-dd
+
+### Changed
+- Change demo wallet image color.
+
 ## 1.1.1 - 2023-03-10
 
 ### Fixed
