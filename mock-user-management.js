@@ -21,18 +21,23 @@ function logout() {
 
 function refreshUserArea({shareButton} = {}) {
   const currentUser = loadCurrentUser();
-  document.getElementById('username').innerHTML = currentUser;
+  document.querySelectorAll('.username').forEach(
+    e => e.innerHTML = currentUser);
 
   if(currentUser) {
-    document.getElementById('logged-in').classList.remove('hide');
-    document.getElementById('logged-out').classList.add('hide');
+    document.querySelectorAll('.logged-in').forEach(
+      e => e.classList.remove('hide'));
+    document.querySelectorAll('.logged-out').forEach(
+      e=> e.classList.add('hide'));
   } else {
     // not logged in
-    document.getElementById('logged-in').classList.add('hide');
-    document.getElementById('logged-out').classList.remove('hide');
+    document.querySelectorAll('.logged-in').forEach(
+      e => e.classList.add('hide'));
+    document.querySelectorAll('.logged-out').forEach(
+      e => e.classList.remove('hide'));
   }
 
-  // Refresh the user's list of wallet contents
+  // refresh the user's list of wallet contents
   clearWalletDisplay();
   const walletContents = loadWalletContents();
 
@@ -81,41 +86,49 @@ function storeInWallet(verifiablePresentation) {
 }
 
 function clearWalletDisplay() {
-  const contents = document.getElementById('walletContents');
-  while(contents.firstChild)
-    contents.removeChild(contents.firstChild);
+  document.querySelectorAll('.walletContents').forEach(
+    contents => {
+      while(contents.firstChild) {
+        contents.removeChild(contents.firstChild);
+      }
+    });
 }
 
 function addToWalletDisplay({text, vc, button}) {
-  const li = document.createElement('li');
+  // create valid class name for `vc
+  const vcClass = btoa(vc.id).slice(0, -3);
+
+  document.querySelectorAll('.walletContents').forEach(e => {
+    const li = document.createElement('li');
+
+    if(button) {
+      const buttonNode = document.createElement('a');
+      buttonNode.classList.add(
+        'waves-effect', 'waves-light', 'btn-small', vcClass);
+      buttonNode.appendChild(document.createTextNode(button.text));
+      li.appendChild(buttonNode);
+    }
+
+    li.appendChild(document.createTextNode(' ' + text));
+
+    e.appendChild(li);
+  });
 
   if(button) {
-    const buttonNode = document.createElement('a');
-    buttonNode.classList.add('waves-effect', 'waves-light', 'btn-small');
-    buttonNode.setAttribute('id', vc.id);
-    buttonNode.appendChild(document.createTextNode(button.text));
-    li.appendChild(buttonNode);
-  }
-
-  li.appendChild(document.createTextNode(' ' + text));
-
-  document.getElementById('walletContents')
-    .appendChild(li);
-
-  if(button) {
-    document.getElementById(vc.id).addEventListener('click', () => {
-      const vp = {
-        "@context": [
-          "https://www.w3.org/2018/credentials/v1",
-          "https://www.w3.org/2018/credentials/examples/v1"
-        ],
-        "type": "VerifiablePresentation",
-        "verifiableCredential": vc
-      }
-      console.log('wrapping and returning vc:', vp);
-      button.sourceEvent
-        .respondWith(Promise.resolve({dataType: 'VerifiablePresentation', data: vp}));
-    });
+    document.querySelectorAll('.' + vcClass).forEach(
+      e => e.addEventListener('click', () => {
+        const vp = {
+          "@context": [
+            "https://www.w3.org/2018/credentials/v1",
+            "https://www.w3.org/2018/credentials/examples/v1"
+          ],
+          "type": "VerifiablePresentation",
+          "verifiableCredential": vc
+        }
+        console.log('if implemented, this VP would be sent:', vp);
+        // do not actually send VP; not implemented
+        window.close();
+      }));
   }
 }
 

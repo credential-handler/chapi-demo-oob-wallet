@@ -18,26 +18,26 @@
   <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
 </head>
 <body>
-  <div class="container">
+  <div id="get" class="container hide">
     <h5>Wallet get() event</h5>
 
-    <div class="card-panel hide" id="logged-in">
-      <div id="confirm">
-        <p>Origin <span id="requestOrigin"></span> is requesting information:</p>
+    <div class="card-panel hide logged-in">
+      <div>
+        <p>Origin <span class="requestOrigin"></span> is requesting information:</p>
 
         <p><span id="requestReason"></span></p>
       </div>
 
-      <div id="userArea">
-        <p><strong>Logged in:</strong> <span id="username"></span></p>
-        <a class="waves-effect waves-light btn-small" id="logoutButton">Reset and Logout</a>
+      <div class="userArea">
+        <p><strong>Logged in:</strong> <span class="username"></span></p>
+        <a class="waves-effect waves-light btn-small logoutButton">Reset and Logout</a>
 
         <h6>Wallet Contents:</h6>
-        <ol id="walletContents"></ol>
+        <ol class="walletContents"></ol>
       </div>
     </div>
 
-    <div class="card-panel hide" id="logged-out">
+    <div class="card-panel hide logged-out">
       <p>
         In order to share a credential with the requesting party:
       </p>
@@ -49,7 +49,50 @@
         <li>Click on a Share button next to an appropriate credential.</li>
       </ol>
 
-      <a class="waves-effect waves-light btn" id="loginButton">Login</a>
+      <a class="waves-effect waves-light btn loginButton">Login</a>
+    </div>
+  </div>
+  <div id="store" class="container hide">
+    <h5>Wallet store() event</h5>
+
+    <div class="card-panel hide logged-in">
+      <div id="confirm">
+        <p>Origin <span class="requestOrigin"></span> is offering this credential to you:</p>
+        <p>Do you wish to store this credential?</p>
+
+        <p><strong>type:</strong> <span id="credentialType"></span></p>
+
+        <p><strong>issuer:</strong> <span id="credentialIssuer"></span></p>
+
+        <a class="waves-effect waves-light btn" id="confirmButton">Confirm</a>
+        <a class="waves-effect waves-light btn" id="cancelButton">Cancel</a>
+      </div>
+
+      <div class="userArea hide">
+        <p><strong>Logged in:</strong> <span class="username"></span></p>
+        <a class="waves-effect waves-light btn-small logoutButton">Reset and Logout</a>
+
+        <p><strong>Credential stored!</strong></p>
+
+        <h6>Wallet Contents:</h6>
+        <ol class="walletContents"></ol>
+
+        <a class="waves-effect waves-light btn center" id="doneButton">Done</a>
+      </div>
+    </div>
+
+    <div class="card-panel hide logged-out">
+      <p>
+        In order to store a credential:
+      </p>
+
+      <ol>
+        <li>Register a wallet with your browser (for example,
+          the <a href="https://wallet.example.chapi.io/">Demo Wallet</a>).</li>
+        <li>Click the <strong>Login</strong> button.</li>
+      </ol>
+
+      <a class="waves-effect waves-light btn loginButton">Login</a>
     </div>
   </div>
 
@@ -66,20 +109,48 @@ function handleRequest() {
 
   console.log('Received credential request', request);
 
-  const {
-    credentialRequestOrigin,
-    credentialRequestOptions
-  } = request;
-  document.getElementById('requestOrigin').innerHTML = credentialRequestOrigin;
+  const {credentialRequestOrigin, protocols} = request;
+  document.querySelectorAll('.requestOrigin').forEach(
+    e => e.innerHTML = credentialRequestOrigin);
 
-  const vp = credentialRequestOptions.web.VerifiablePresentation;
-  const query = Array.isArray(vp.query) ? vp.query[0] : vp.query;
+  // storage request
+  if(protocols.OID4VC) {
+    document.getElementById('store').classList.remove('hide');
+    storeCredential(protocols);
+  } else {
+    document.getElementById('get').classList.remove('hide');
+    shareCredential(protocols);
+  }
+}
 
+onDocumentReady(() => {
+  document.querySelectorAll('.loginButton').forEach(
+    e => e.addEventListener('click', login));
+  document.querySelectorAll('.logoutButton').forEach(
+    e => e.addEventListener('click', logout));
+  refreshUserArea();
+  handleRequest();
+});
+
+function shareCredential(protocols) {
+  // parse VPR from "fake" param (not a part of OID4VP, as the demo issuer
+  // does not actually implement this)
+  const url = protocols.OID4VP;
+  const parsed = new URL(url);
+  const vprJSON = parsed.searchParams.get('fake');
+  if(!vprJSON) {
+    throw new Error(
+      'Expected "fake" query param in OID4VP URL for demo purposes.');
+  }
+  const vpr = JSON.parse(vprJSON);
+
+  const query = Array.isArray(vpr.query) ? vpr.query[0] : vpr.query;
   if(!query.type === 'QueryByExample') {
     throw new Error(
-      'Only "QueryByExample" requests are supported in demo wallet.');
+      'Only QueryByExample requests are supported in demo wallet.');
   }
 
+  console.log('query', query);
   const requestReason = query.credentialQuery.reason;
   document.getElementById('requestReason').innerHTML = requestReason;
 
@@ -91,11 +162,43 @@ function handleRequest() {
   });
 }
 
-onDocumentReady(() => {
-  document.getElementById('loginButton').addEventListener('click', login);
-  document.getElementById('logoutButton').addEventListener('click', logout);
-  handleRequest();
-});
+function storeCredential(protocols) {
+  // parse VC from "fake" param (not a part of OID4VC, as the demo issuer
+  // does not actually implement this)
+  const url = protocols.OID4VC;
+  const parsed = new URL(url);
+  const vpJSON = parsed.searchParams.get('fake');
+  if(!vpJSON) {
+    throw new Error(
+      'Expected "fake" query param in OID4VC URL for demo purposes.');
+  }
+  const vp = JSON.parse(vpJSON);
+  const vc = Array.isArray(vp.verifiableCredential) ?
+    vp.verifiableCredential[0] : vp.verifiableCredential;
+
+  console.log('vc', vc, getCredentialType(vc));
+  document.getElementById('credentialType').innerHTML = getCredentialType(vc);
+  document.getElementById('credentialIssuer').innerHTML = vc.issuer;
+
+  // set up the event handlers for the buttons
+  document.getElementById('cancelButton').addEventListener('click', () => {
+    // do nothing, close the window
+    window.close();
+  });
+
+  document.getElementById('confirmButton').addEventListener('click', () => {
+    document.querySelectorAll('.userArea').forEach(
+      e => e.classList.remove('hide'));
+    document.getElementById('confirm').classList.add('hide');
+
+    storeInWallet(vp); // in mock-user-management.js
+    refreshUserArea();
+  });
+
+  document.getElementById('doneButton').addEventListener('click', () => {
+    window.close();
+  });
+}
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
