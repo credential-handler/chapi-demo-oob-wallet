@@ -113,13 +113,17 @@ function handleRequest() {
   document.querySelectorAll('.requestOrigin').forEach(
     e => e.innerHTML = credentialRequestOrigin);
 
-  // storage request
   if(protocols.OID4VC) {
+    // OID4VC storage request
     document.getElementById('store').classList.remove('hide');
     storeCredential(protocols);
-  } else {
+  } else if(protocols.OID4VP) {
+    // OID4VP query
     document.getElementById('get').classList.remove('hide');
     shareCredential(protocols);
+  } else {
+    // exchange URL store or query
+    storeCredential(protocols);
   }
 }
 
@@ -163,14 +167,14 @@ function shareCredential(protocols) {
 }
 
 function storeCredential(protocols) {
-  // parse VC from "fake" param (not a part of OID4VC, as the demo issuer
-  // does not actually implement this)
-  const url = protocols.OID4VC;
+  // parse VC from "fake" param (not a part of OID4VC / VC API exchange, as the
+  // demo issuer does not yet actually implement this)
+  const url = protocols.OID4VC || protocols.vcapi;
   const parsed = new URL(url);
   const vpJSON = parsed.searchParams.get('fake');
   if(!vpJSON) {
     throw new Error(
-      'Expected "fake" query param in OID4VC URL for demo purposes.');
+      'Expected "fake" query param in OID4VC / vcapi URL for demo purposes.');
   }
   const vp = JSON.parse(vpJSON);
   const vc = Array.isArray(vp.verifiableCredential) ?
