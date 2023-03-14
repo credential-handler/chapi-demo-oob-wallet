@@ -12,6 +12,6 @@
     "url": "/wallet-worker.html",
     "enabledTypes": ["VerifiablePresentation"],
     "acceptedInput": "url",
-    "acceptedProtocols": ["OID4VC", "OID4VP"]
+    "acceptedProtocols": ["OID4VC", "OID4VP", "vcapi"]
   }
 }
