@@ -1,6 +1,6 @@
 # chapi-demo-oob-wallet Changelog
 
-## 1.3.0 - 2023-03-dd
+## 1.3.0 - 2023-03-14
 
 ### Added
 - Add `vcapi` protocol example.
